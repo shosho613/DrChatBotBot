@@ -25,6 +25,7 @@ def create_driver():
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
     driver = webdriver.Chrome("/usr/local/bin/chromedriver", chrome_options=chrome_options)
+    logging.info("Created Driver")
     return driver
 
 def fill_chat(driver):
@@ -37,7 +38,7 @@ def fill_chat(driver):
     password.send_keys(Keys.RETURN)
     time.sleep(1)
     try:
-        yes_button = driver.find_element_by_id("NoAnswer")
+        no_button = driver.find_element_by_id("NoAnswer")
         for i in range(3):
             WebDriverWait(driver, 3).until(
                 EC.element_to_be_clickable((By.ID, "NoAnswer")
@@ -45,6 +46,7 @@ def fill_chat(driver):
         WebDriverWait(driver, 5).until(
             EC.element_to_be_clickable((By.XPATH, '//*[@id="ConfirmNoSymptoms"]/div[3]/div[2]')
           )).click()
+        logging.info("Clicked no 3 times")
     except Exception as e:
         logging.info(e)
         logging.info("Failed at finding elements")
@@ -79,6 +81,7 @@ def send_email(content):
 
 def run():
     content = fill_chat(create_driver())
+    logging.info("Sending email with %s", content)
     send_email(content)
 
 def main(mytimer: func.TimerRequest) -> None:
